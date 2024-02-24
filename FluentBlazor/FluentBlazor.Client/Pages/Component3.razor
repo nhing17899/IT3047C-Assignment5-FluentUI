@@ -1,0 +1,11 @@
+﻿@page "/component3"
+
+<h4>This is Component 3 - with Text Field</h4>
+
+<FluentTextField @bind-Value=value Label="Attendance"></FluentTextField>
+
+<p>Who attends? <span style="font-weight: bold">@value</span></p>
+
+@code {
+    string? value;
+}

@@ -1,0 +1,67 @@
+﻿@page "/component2"
+
+@using System.Collections.Immutable
+
+<h4>This is Component 2 - with Checkbox</h4>
+
+<div style="font-weight: bold">To-do list for meeting:</div>
+<FluentStack Style="margin: 20px;" Orientation="Orientation.Vertical">
+    <FluentCheckbox Label="All"
+                    ThreeState="true"
+                    ShowIndeterminate="false"
+                    @bind-CheckState="AreAllTasksVisible" />
+    @foreach (string task in _allTasks)
+    {
+        bool isChecked = _visibleTasks.Contains(task);
+        <FluentCheckbox Label="@($"{task}")"
+                        @bind-Value:get="isChecked"
+                        @bind-Value:set="c => OnTaskVisibilityChanged(task, c)" />
+    }
+</FluentStack>
+
+
+@code {
+
+    private readonly ImmutableArray<string> _allTasks = ["Task 1", "Task 2", "Task 3", "Task 4", "Task 5", "Task 6", "Task 8"];
+    private readonly HashSet<string> _visibleTasks;
+
+    public Component2()
+    {
+        _visibleTasks = new HashSet<string>(_allTasks);
+    }
+
+    protected void OnTaskVisibilityChanged(string task, bool isVisible)
+    {
+        if (isVisible)
+        {
+            _visibleTasks.Add(task);
+        }
+        else
+        {
+            _visibleTasks.Remove(task);
+        }
+    }
+
+    private bool? AreAllTasksVisible
+    {
+        get
+        {
+            return _visibleTasks.SetEquals(_allTasks)
+                ? true
+                : _visibleTasks.Count == 0
+                    ? false
+                    : null;
+        }
+        set
+        {
+            if (value is true)
+            {
+                _visibleTasks.UnionWith(_allTasks);
+            }
+            else if (value is false)
+            {
+                _visibleTasks.Clear();
+            }
+        }
+    }
+}
